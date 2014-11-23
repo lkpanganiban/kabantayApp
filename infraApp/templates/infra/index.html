@@ -1,0 +1,94 @@
+{% extends "base.html"%}
+
+{% block page_content %}
+<!--Load gis layers-->
+<script src="{{url_for('static', filename='js/regions.js') }}"></script>
+<script src="{{url_for('static', filename='js/provinces.js') }}"></script>
+<script src="{{url_for('static', filename='js/airports.js') }}"></script>
+<script src="{{url_for('static', filename='js/indusZone.js') }}"></script>
+<script src="{{url_for('static', filename='js/roads.js') }}"></script>
+<script src="{{url_for('static', filename='js/seaports.js') }}"></script>
+<script src="{{url_for('static', filename='js/newTwo.js') }}"></script>
+<script src="{{url_for('static', filename='js/leaflet-categorized-layers.min.js') }}"></script>
+
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/leaflet-categorized-layers.min.css') }}" />
+<script src="{{url_for('static', filename='js/leaflet.markercluster-src.js') }}"></script>
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/MarkerCluster.Default.css') }}" />
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/MarkerCluster.css') }}" />
+	<style>
+	#region, #provinces, #industrial, #roads {
+		position:absolute;
+		height:7rem;
+		width:22rem;
+    	padding: 6px 8px;
+    	font: 14px/16px Arial, Helvetica, sans-serif;
+    	background: white;
+    	background: rgba(255,255,255,0.8);
+    	box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    	border-radius: 5px;
+    	left:5rem;
+    	top:5rem;
+    	z-index:1002;
+	}
+
+	.pop{
+		height:7rem;
+		width:22rem;
+    	font: 14px/16px Arial, Helvetica, sans-serif;
+    	background: white;
+    	background: rgba(255,255,255,0.8);
+    	box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    	border-radius: 5px;
+	}
+
+	.content{
+		padding-top:10px;
+		background: transparent;
+		margin:0 auto;
+	}
+
+	.content h5{
+		font-size:14px;
+    	margin: 0 0 5px;
+    	color: #B21480;
+	}
+
+	#provinces, #industrial{
+		line-height: 12px;
+		left:28rem;
+		height:8rem;
+	}
+
+	#industrial{
+		line-height: 5px;
+		width:32rem;
+		top:15rem;
+		left:25rem;
+	}
+
+	#region h4, #provinces h4{
+		font-size:18px;
+    	margin: 0 0 5px;
+    	color: #3682B6;
+	}
+	.leaflet-control-layers{
+		top:5rem;
+		right:3rem;
+		z-index:5;
+	}
+	</style>
+
+<div class="container">
+	<div class="fill">
+		<div id ="map">
+				<script src="{{url_for('static', filename='js/map.js') }}"></script>
+				<script>
+					{% for data in dataList %}
+						var marker = L.marker( [{{ data.lat }},{{ data.lon }}]).addTo(map)
+						marker.bindPopup("Project name: {{data.title}}" );
+					{% endfor %}
+				</script>
+		</div>
+	</div>
+</div>
+{% endblock %}

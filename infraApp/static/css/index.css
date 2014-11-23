@@ -1,0 +1,36 @@
+html, body {
+        height: 100%;
+        width: 100%;
+}
+/*-----Map Container-----*/
+
+#map { position:absolute; 
+    top:0; 
+    bottom:0; 
+    width:100%; }
+
+.fill {
+    top: 40px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    position: absolute;
+    width: auto;
+    height: auto;
+}
+
+.navbar {
+    margin-bottom: 0;
+    z-index:5;
+}
+/*-----Map Controls-----*/
+.leaflet-control-zoom{
+    position:absolute;
+    top:5rem;
+}
+
+.leaflet-bar a {
+    cursor: default;
+    background-color: #04519b;
+    color: #FFF;
+}

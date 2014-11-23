@@ -1,0 +1,61 @@
+{% extends "base.html"%}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block page_content %}
+<style>
+#table-responsive{
+	padding-top:3%;}
+body{padding-top:10px;}
+
+.glyphicon {  margin-bottom: 10px;margin-right: 10px;}
+
+small {
+display: block;
+line-height: 1.428571429;
+color: #999;
+	}
+
+#conName, #conID, #regionsData{
+	text-justify: inter-word;
+	text-align: center;
+}
+th{
+	text-justify: inter-word;
+	text-align: center;
+}
+</style>
+
+<div id="table-responsive">
+<table class="table table-striped">
+   <thead>
+   		<tr>
+   			<div class="pull-left"> 
+			<br>
+			</div>
+   		</tr>
+      	<tr id="heading">
+	        <th>Contractor ID</th>
+	        <th>Contractor Name </th>
+	        <th>Region</th>
+      	</tr>
+   </thead>
+   <tbody>
+   {% for conID in conID%}
+   		<tr>
+ 	
+			<td id="conID"> {{conID.conID}} </td>
+			<td id="conName">
+			  		<a href="{{ url_for('infra.contractorProfile', conID=conID.conID ) }}">
+					<small>{{conID.conName}}</small>
+					</a>
+				
+			</td>
+			<td id="regionsData"> {{conID.province}}</td>
+
+			{% endfor %}
+		</tr>
+   </tbody>
+</table>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,164 @@
+{% extends "base.html"%}
+
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block page_content %} 
+
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/leaflet.draw.css') }}">
+
+<script type=text/javascript src="{{url_for('static', filename='js/leaflet.draw.js') }}"></script>
+<script type=text/javascript src="{{url_for('static', filename='js/jquery.slimscroll.min.js') }}"></script>
+
+<!--Handle form panel over map edit-->
+  <script>
+    $(function(){
+      $('.panel-body').slimScroll({
+          height: '100%',
+          distance:'0.5%',
+          color:'#022a50',
+          opacity:'0.5',
+          railVisible: true,
+      });
+    });
+
+  </script>
+
+  <style>
+  .leaflet-draw-section{
+    margin-top:5rem;
+  }
+  .leaflet-draw-toolbar{
+    position:relative;
+    top:1rem;
+  }
+  .leaflet-bar a {
+    cursor: default;
+    background-color:#022a50;
+    opacity:0.7;
+    color:white;
+  }
+  .leaflet-bar a:hover {
+    cursor: default;
+    background-color:#022a50;
+    opacity:0.3;
+    color:white;
+  }
+  #formContent{
+    height:66%;
+
+  }
+  #map{
+    width:43%;
+    height:77%;
+    padding: auto 3%;
+    margin-top:8.5%;
+  }
+  .panel-footer{
+    background-color:#022a50;
+    opacity: 1;
+  }
+  .panel-default .panel-heading{
+    color:white;
+    background-color:#022a50 ;
+    opacity: 1;
+  }
+  .leaflet-container {
+    background: rgb(177, 211, 198);
+    outline: 3;
+    border-radius: 1rem;
+  }
+  .panel-body {
+    background-color: rgba(177, 211, 198,0.15);
+  }
+  .leaflet-control-geocoder{
+    margin-top: 10%;
+    position:absolute;
+    top:5rem;
+    right:.5rem;
+  }
+  .leaflet-control-geocoder-form{
+    margin:0 auto;
+  }
+  .leaflet-control-geocoder-input{
+    border-radius: 0.5rem;
+    border-color:#022a50;
+    border-width: 0.15rem;
+    width:45rem;
+    height:5%;
+  }
+  .leaflet-control-geocoder-button{
+    display:inline;
+    background-color:#022a50;
+    color:white;
+    border-radius: 0.5rem;
+    border-color:  transparent;
+    margin-left:0.5rem;
+  }
+  .leaflet-control-geocoder-expanded{
+    position:absolute;
+    top:50rem;
+    padding: 0 auto;
+    width:52rem;
+  }
+  .leaflet-top .leaflet-control {
+    position: absolute;
+    top:1rem; 
+  }
+  #content{
+    margin-top: 8rem;
+    height:100%;
+  }
+  html{
+    overflow:hidden;
+  }
+  body { 
+    background: url('../../static/img/login.jpg') no-repeat center center fixed; 
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+  }
+
+  .panel-default {
+    opacity: 0.9;
+  }
+  </style>
+</style>
+
+<!--Setup map editor-->
+<div class="container" id="content">
+<div class="col-lg-6 pull-left" id="map">
+<script type=text/javascript src="{{url_for('static', filename='js/mapEdit.js') }}"></script>
+<!--Load data in DB-->
+<script>
+{% for data in dataList %}
+var marker = L.marker( [{{ data.lat }},{{ data.lon }}]).addTo(map)
+
+marker.bindPopup(
+  "ID: {{data.prjID}} <br>"+ 
+  "Project name: {{data.title}} <br>"+
+  "Cost: {{data.cost}} <br>"+
+  "Contractor: {{data.contractor}} <br>"+
+  "Start Date: {{data.dateStart}} <br>"+
+  "End Date: {{data.dateEnd}} <br>"+
+  "% Completed: {{data.status}} <br>"
+  );
+
+{% endfor %}
+</script>
+</div>
+
+<div class="col-lg-6 pull-right" id="formContent">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <strong>Project Information</strong>
+    </div>
+        
+  <div class="panel-body">
+      {{ wtf.quick_form(form) }}
+  </div>
+  <div class="panel-footer"><a href="#" class=""></a></div>
+</div>
+</div>
+</div>
+{% endblock %}

@@ -1,0 +1,72 @@
+{% extends "base.html"%}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block page_content %}
+<style>
+#table-responsive{
+	padding-top:3%;}
+body{padding-top:10px;}
+
+.glyphicon {  margin-bottom: 10px;margin-right: 10px;}
+
+small {
+display: block;
+line-height: 1.428571429;
+color: #999;
+	}
+
+#projTitle{
+	text-justify: inter-word;
+	text-align: justify;
+}
+
+#regionsData{
+	text-justify: inter-word;
+	text-align: center;
+}
+
+th{
+	text-justify: inter-word;
+	text-align: center;
+}
+</style>
+
+<div id="table-responsive">
+<table class="table table-striped">
+   <thead>
+   		<tr>
+   			<div class="pull-left col-lg-12">
+	   		<form method="post" class="form-group" role="form">
+	   			<label class="control-label pull-left" for="title">Search </label>
+		   		{{ form.csrf_token }}
+		   		<input class="input-medium search-query" id="title" name="title" required type="text" value="">
+				<span class="numResults">
+					&nbsp;&nbsp;Returned {{ numResults }} results
+				</span>
+				{% if current_user.is_authenticated() %}
+						<a class="pull-right" href="{{ url_for('infra.addProject') }}">Add Project</a>
+					{% endif %}
+
+			</form>
+			<br>
+			</div>
+   		</tr>
+      	<tr id="heading">
+	        <th>Project ID</th>
+	        <th>Project Name | Location</th>
+	        <th>Region</th>
+      	</tr>
+   </thead>
+   <tbody>
+   	{% for proj in projList %}
+		<tr>
+			<td> {{ proj.prjID | safe }}</td>
+			<td id="projTitle"><a href="{{ url_for('infra.projectProfile', prjID=proj.prjID ) }}"><small>{{ proj.title | safe }}</small> </a></td>
+			<td id="regionsData"> {{ proj.regions | safe }}</td>
+		</tr>
+	{% endfor %}
+   </tbody>
+</table>
+
+</div>
+
+{% endblock %}

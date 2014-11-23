@@ -1,0 +1,62 @@
+{% extends "base.html"%}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block page_content %}
+
+<style>
+#container{
+	padding-top:50px;
+
+}
+.col-md-8 {
+    text-align: justify;
+    text-justify: inter-word;
+}
+#map{
+	height:250px;
+
+}
+#conInfo{
+	padding-left:5rem;
+}
+</style>
+
+<div id="container">
+    <h2>Contractor Profile</h2>
+    <div class="row">
+        <div class="col-xs-12 col-sm-6 col-md-12">
+            <div class="well well-sm">
+                <div class="row">
+                    <div class="col-sm-6 col-md-4">
+                    	<div id="map">
+                    	<script>
+							var map = L.map('map').setView([12.9966338,122.2119], 4);
+							L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+							    attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+							}).addTo(map);
+							</script>
+                    	</div>
+                    </div>
+                    <div class="col-sm-6 col-md-8" id="conInfo">
+                        <h4>Contractor</h4>
+                        <b>Name:</b> {{conName}}
+                        <br />
+                        <b>Location: </b><small>{{conLoc}}</small>
+                        <br />
+                        <b>Category:</b>{{category}}
+                        <br />
+                        <b>Number of Bidded Projects: </b>{{bidded_projects}}
+                        <br />
+                        <b>Number of Awarded Projects: </b>{{num_of_awarded}}
+                        <br />
+                        <b>Total Amount of Projects: </b>PHP {{total_amount_of_projects}}
+                        <br />
+                        <b>Other Projects: </b>
+                        <br />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

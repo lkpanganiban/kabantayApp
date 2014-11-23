@@ -1,0 +1,168 @@
+{% extends "base.html"%}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block page_content %}
+
+
+<style>
+#container{
+	padding-top:40px;
+
+}
+.col-md-8 {
+    text-align: justify;
+    text-justify: inter-word;
+}
+#map{
+	height:250px;
+
+}
+#projInfo{
+	padding-left:5rem;
+}
+#headerProject{
+
+}
+</style>
+<script type=text/javascript src="{{url_for('static', filename='js/d3.min.js') }}"></script> 
+<div id="container">
+
+    <span id="headerProject">Project Profile</span>
+    {% if current_user.is_authenticated() %}
+        <span class="pull-right">
+            <a href="{{ url_for('infra.projectEditorProfile', prjID = proj.prjID ) }}">Edit Project</a>
+        </span>
+    {% endif %}
+    <div class="row">
+        <div class="col-xs-12 col-sm-6 col-md-12">
+            <div class="well well-sm">
+                <div class="row">
+                    <div class="col-sm-6 col-md-4">
+                    	<div id="map">
+
+                    	<script>
+							var map = L.map('map').setView([12.9966338,122.2119], 4);
+							L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+							    attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+							}).addTo(map);
+							function statusUpdate(){
+									var stat = {{ proj.status | safe}}
+									var update = "terminated"; 
+									if( stat == 0){
+										update = "not yet started";
+									}
+									else if (stat > 0 && stat <100 ){
+										update="ongoing";
+									}else{
+										update="complete";
+									}
+									return update;
+								}
+                    	</script>
+                    	</div>
+                    </div>
+                    <div class="col-sm-6 col-md-8" id="projInfo">
+                        <h4>{{proj.prjID}}</h4>
+                        <b>Title | Location: </b><small>{{ proj.title }}</small>
+                        <p>
+                            <b>Region:</b> {{ proj.regions }}
+                            <br />
+                            <b>Contractor:</b> {{ proj.contractor }}
+                            <br />
+                            <b>Implementing Office:</b>{{ proj.impOffice }}
+                            <br />
+                            <b>Source of Funds:</b>{{ proj.srcFunds }}
+                            <br />
+                            <b>Cost(x1000):</b>{{ cost | safe}}
+                            <br />
+                            <b>Start Date:</b>{{ proj.startDate }}
+                            <br />
+                            <b>Target Date:</b>{{ proj.origComp }}
+                            <br />
+                            <b>Actual Finish:</b>{{ proj.actComp }}
+                            <br />
+                            <b>Status:</b><span id="output"></span>
+                            <script>
+									var stat = {{ proj.status | safe}}
+									var update = "bato"; 
+									if( stat == 0){
+										update = "not yet started";
+									}
+									else if (stat > 0 && stat <100 ){
+										update="ongoing";
+									}else{
+										update="complete";
+									}
+									$('#output').html(update);
+							</script>                         
+                        </p>
+                        <center><div id="chart">{{proj.status | safe}}% Completed</div></center>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% if comments %}
+	<h3>Comments</h3>
+	{% for comment in comments %}
+		{% set index = loop.index %}
+			<p>
+				<span class="label label-default">#{{ index }} </span>
+				<b> {{ comment.author_name }}</b>
+			</p>
+			<div class="comment-body">
+				{{comment.body_html | safe}}
+			</div>	
+	{% endfor %}
+{% endif %}
+
+<h3 id="comment-form"> Write a Feedback </h3>
+{{wtf.quick_form(form, action='#comment-form')}}
+
+</div>
+
+{{ super() }}
+{{ pagedown.include_pagedown() }}
+
+<script>
+    var w = 200;
+    var h = 200;
+    var r = h/2;
+    var color = d3.scale.category20c();
+
+    var data = [{"label":"", "value":{{proj.status | safe}}}, 
+    		          {"label":"", "value":100 - {{proj.status|safe}}}];
+
+
+    var vis = d3.select('#chart').append("svg:svg").data([data]).attr("width", w).attr("height", h).append("svg:g").attr("transform", "translate(" + r + "," + r + ")");
+    var pie = d3.layout.pie().value(function(d){return d.value;});
+
+    // declare an arc generator function
+    var arc = d3.svg.arc().outerRadius(r);
+
+    // select paths, use arc generator to draw
+    var arcs = vis.selectAll("g.slice").data(pie).enter().append("svg:g").attr("class", "slice");
+    arcs.append("svg:path")
+        .attr("fill", function(d, i){
+        	if(i==0){
+        		return color(i)
+        	}else{
+        		return "rgba(225,225,225,0.5)"
+        	}
+        })
+        .attr("d", function (d) {
+            return arc(d);
+        });
+
+    // add the text
+    arcs.append("svg:text").attr("transform", function(d){
+    			d.innerRadius = 0;
+    			d.outerRadius = r;
+        return "translate(" + arc.centroid(d) + ")";}).attr("text-anchor", "middle").text( function(d, i) {
+        return data[i].label;}
+    		);
+</script>
+
+
+{% endblock %}

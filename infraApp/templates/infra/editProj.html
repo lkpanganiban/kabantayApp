@@ -1,0 +1,149 @@
+{% extends "base.html"%}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block page_content %}
+
+
+<style>
+#container{
+	padding-top:40px;
+
+}
+.col-md-8 {
+    text-align: justify;
+    text-justify: inter-word;
+}
+#map{
+	height:350px;
+
+}
+#projInfo{
+	padding-left:5rem;
+
+}
+.leaflet-draw-section{
+    margin-top:5rem;
+}
+.leaflet-draw-toolbar{
+    position:relative;
+    top:1rem;
+}
+  .leaflet-control-geocoder{
+    margin-top: 10%;
+    position:absolute;
+    top:5rem;
+    right:.5rem;
+  }
+  .leaflet-control-geocoder-form{
+    margin:0 auto;
+  }
+  .leaflet-control-geocoder-input{
+    border-radius: 0.5rem;
+    border-color:#022a50;
+    border-width: 0.15rem;
+    width:25rem;
+    height:5%;
+  }
+  .leaflet-control-geocoder-button{
+    display:inline;
+    background-color:#022a50;
+    color:white;
+    border-radius: 0.5rem;
+    border-color:  transparent;
+    margin-left:0.5rem;
+  }
+  .leaflet-control-geocoder-expanded{
+    position:absolute;
+    top:50rem;
+    padding: 0 auto;
+    width:32rem;
+  }
+  .leaflet-top .leaflet-control {
+    position: absolute;
+    top:1rem; 
+  }
+  .form-group{
+    width:40%;
+
+  }
+</style>
+<script type=text/javascript src="{{url_for('static', filename='js/d3.min.js') }}"></script> 
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/leaflet.draw.css') }}">
+<script type=text/javascript src="{{url_for('static', filename='js/leaflet.draw.js') }}"></script>
+<div id="container">
+    <h3>Project Profile Editor</h3>
+    <div class="row">
+        <div class="col-xs-12 col-sm-6 col-md-12">
+            <div class="well well-sm">
+                <div class="row">
+                    <div class="col-sm-6 col-md-4">
+                    	<div id="map">
+                            <script type=text/javascript src="{{url_for('static', filename='js/mapEdit.js') }}"></script>
+                    	</div>
+                    </div>
+                    <div class="col-sm-6 col-md-8" id="projInfo">
+                        <h4>{{proj.prjID}}</h4>
+                        <b>Title | Location: </b><small>{{ proj.title }}</small>
+                        <p>
+                            <b>Region:</b> {{ proj.regions }}
+                            <br />
+                            <b>Contractor:</b> {{ proj.contractor }}
+                            <br />
+                            <b>Implementing Office:</b>{{ proj.impOffice }}
+                            <br />
+                            <b>Source of Funds:</b>{{ proj.srcFunds }}
+                            <br />
+                            <b>Cost(x1000):</b>{{ cost | safe}}
+                            <br />
+                            <b>Start Date:</b>{{ proj.startDate }}
+                            <br />
+                            <b>Target Date:</b>{{ proj.origComp }}
+                            <br />
+                                  {{ wtf.quick_form(form) }}                                                   
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <center><div id="chart">{{proj.status | safe}}% Completed</div></center>
+
+        </div>
+    </div>
+</div>
+<!--Create a dynamic pie chart-->
+<script>
+    var w = 400;
+    var h = 400;
+    var r = h/2;
+    var color = d3.scale.category20c();
+    var data = [{"label":"", "value":{{proj.status | safe}}}, 
+    		          {"label":"", "value":100 - {{proj.status|safe}}}];
+
+    var vis = d3.select('#chart').append("svg:svg").data([data]).attr("width", w).attr("height", h).append("svg:g").attr("transform", "translate(" + r + "," + r + ")");
+    var pie = d3.layout.pie().value(function(d){return d.value;});
+
+    // declare an arc generator function
+    var arc = d3.svg.arc().outerRadius(r);
+
+    // select paths, use arc generator to draw
+    var arcs = vis.selectAll("g.slice").data(pie).enter().append("svg:g").attr("class", "slice");
+    arcs.append("svg:path")
+        .attr("fill", function(d, i){
+        	if(i==0){
+        		return color(i)
+        	}else{
+        		return "rgba(225,225,225,0.5)"
+        	}
+        })
+        .attr("d", function (d) {
+            return arc(d);
+        });
+
+    // add the text
+    arcs.append("svg:text").attr("transform", function(d){
+    			d.innerRadius = 0;
+    			d.outerRadius = r;
+        return "translate(" + arc.centroid(d) + ")";}).attr("text-anchor", "middle").text( function(d, i) {
+        return data[i].label;}
+    		);
+</script>
+
+{% endblock %}

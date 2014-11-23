@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block page_content %}
+<style>
+	body { 
+		background: url('../../static/img/login.jpg') no-repeat center center fixed; 
+		-webkit-background-size: cover;
+		-moz-background-size: cover;
+		-o-background-size: cover;
+		 background-size: cover;
+	}
+	.panel-default {
+		opacity: 0.9;
+		margin:0 auto;
+		margin-top:60%;
+
+	}
+	.form-group.last {
+		margin-bottom:0px;
+	}
+	.panel-footer{
+		background-color:#022a50 ;
+		opacity: 1;
+	}
+	.panel-default .panel-heading{
+		color:white;
+		background-color:#022a50 ;
+		opacity: 1;
+	}
+</style>
+<div class = "container">
+	<div class="row">
+		<div class="col-md-4  col-md-offset-4">
+			<div class="panel panel-default">
+				<div class="panel-heading"><strong>Login</strong></div>
+			<div class="panel-body">
+			   {{ wtf.quick_form(form) }}
+			</div >
+			<div class="panel-footer"><a href="#" class=""></a></div>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}
